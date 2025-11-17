@@ -1,3 +1,33 @@
+/*     DFS Pseudocode
+
+FUNCTION DFS(int u)
+// All nodes already initialized to white (unvisited)
+
+// If node already visited, skip
+IF color[u] == gray OR color[u] == red:
+	return;
+END IF
+
+// Set node to visited
+color[u] = gray
+
+FOR v = 0 to number of nodes:
+	IF graph[u][v] == 1:
+		DFS(v)
+	END IF
+END FOR
+
+// Set node to fully discovered
+color[u] = red	
+
+return;
+
+*/
+
+
+
+
+
 #include <iostream>
 #include <vector>
 #include <string>
