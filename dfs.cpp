@@ -1,19 +1,44 @@
 #include <iostream>
 #include <vector>
+#include <string>
 using namespace std;
 
 
 class Graph {
 
     private:
+    int n; // number of nodes
     vector<vector<int>> g;// adjacency matrix
-    vector<int> color; // color
+    vector<string> color; // color
     vector<int> parent; // parent
 
     public:
 
-    Graph(){
-        
+    Graph(int n): 
+    
+    g(n, vector<int<(n,0)),
+    color(n, "white"),
+    parent(n, -1){}
+
+    void dfs(int u){
+        // If node already visited or fully discovered, return
+        if(color[u] == "white" || color[u] == "red"){
+            return;
+        }
+
+        // Set node to visited
+        color[u] = "gray";
+
+        // Search for neighbors v of node u and run DFS on them
+        for(int v = 0; v < n; v++){
+            if(g[u][v] == 1){
+                dfs(v);
+            }
+        }
+
+        // Set node to fully discovered; all of u's neighbors will have been visited after the for loop
+        color[u] = "red";
+        return;
 
     }
 
