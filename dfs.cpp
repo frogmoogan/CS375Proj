@@ -5,7 +5,7 @@ FUNCTION DFS(int u)
 
 // If node already visited, skip
 IF color[u] == gray OR color[u] == red:
-	return;
+	return
 END IF
 
 // Set node to visited
@@ -20,12 +20,9 @@ END FOR
 // Set node to fully discovered
 color[u] = red	
 
-return;
+return
 
 */
-
-
-
 
 
 #include <iostream>
@@ -46,7 +43,7 @@ class Graph {
 
     Graph(int n): 
     
-    g(n, vector<int<(n,0)),
+    g(n, vector<int>(n,0)),
     color(n, "white"),
     parent(n, -1){}
 
@@ -70,6 +67,10 @@ class Graph {
         color[u] = "red";
         return;
 
+    }
+
+    void addEdge(int u, int v){
+        g[u][v] = 1;
     }
 
 
