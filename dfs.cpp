@@ -28,6 +28,8 @@ return
 #include <iostream>
 #include <vector>
 #include <string>
+#include <fstream>
+#include <sstream>
 using namespace std;
 
 
@@ -80,8 +82,23 @@ class Graph {
 };
 
 
-int main(){
+int main(int argc, char* argv[]){
 
+    if(argc != 3){
+        cout << "Incorrect number of arguments. Must provide input and output file." << endl;
+        return 1;
+    }
+
+    ifstream infile(argv[1]);
+    ofstream outfile(argv[2]);
+
+    if(!infile){
+        cout << "Could not open input file." << endl;
+    }
+
+    if(!outfile){
+        cout << "Could not open output file." << endl;
+    }
 
 
     return 0;
