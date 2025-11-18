@@ -40,23 +40,27 @@ class Graph {
     vector<vector<int>> g;// adjacency matrix
     vector<string> color; // color
     vector<int> parent; // parent
+    vector<int> result; // result from DFS
 
     public:
 
     Graph(int n): 
-    
+    n(n),
     g(n, vector<int>(n,0)),
     color(n, "white"),
     parent(n, -1){}
 
     void dfs(int u){
         // If node already visited or fully discovered, return
-        if(color[u] == "white" || color[u] == "red"){
+        if(color[u] == "gray" || color[u] == "red"){
             return;
         }
 
         // Set node to visited
         color[u] = "gray";
+        result.push_back(u);
+
+
 
         // Search for neighbors v of node u and run DFS on them
         for(int v = 0; v < n; v++){
@@ -73,6 +77,16 @@ class Graph {
 
     void addEdge(int u, int v){
         g[u][v] = 1;
+    }
+
+    void printResult(ofstream& outfile){
+        for(int i = 0; i < result.size(); i++){
+            outfile << result[i] << " ";
+        }
+
+        outfile << endl;
+
+        return;
     }
 
 
@@ -100,6 +114,28 @@ int main(int argc, char* argv[]){
         cout << "Could not open output file." << endl;
     }
 
+    // get number of nodes from top of input file
+    int s;
+    infile >> s;
+    Graph g(s);
+    int i, j;
+
+    // get edges from input file
+    while(infile >> i >> j){
+        g.addEdge(i, j);
+
+        cout << "Added edge " << i << " -> " << j << endl;
+    }
+
+    g.dfs(0);
+    g.printResult(outfile);
+
+
+
+
+
 
     return 0;
+
+
 }
