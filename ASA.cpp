@@ -60,3 +60,56 @@
  }
   
  */
+
+#include <iostream>
+using namespace std;
+
+class Graph {
+private:
+    int numNodes;
+    int start;
+    int roundsCount;
+    vector <vector<int>> adjMatrix;
+    vector <int> distance;
+    vector <int> hueristic>;
+    vector <int> totalVal;
+    vector <int> openList;	//nodes in queue
+    vector <int> closedList;	//nodes whose paths have been explored
+    vector <int> path;		//to store optimal path solution
+
+public:
+    void compute_hueristic(int n)
+    {
+
+    }
+
+    //running counter of distance
+    //based on priority queue, distance will be incremented +1 for every round
+    //roundsCount intialized to 0 in main
+
+    void compute_distance(int n){
+	/*
+	int tempdist = 0;
+
+	//check adjency matrix's row, direct 1 degree neighbor
+    	for (int i = 1; i < numNodes + 1; i++){
+		if (adjMatrix[n + 1][i] == 1){
+			distance[n] = 1;
+		}
+	}
+	*/
+
+	
+    }
+
+
+    void ASA(int s, int f){
+    
+    }
+};
+
+int main()
+{
+    
+    return 0;
+}
