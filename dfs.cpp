@@ -75,10 +75,12 @@ class Graph {
 
     }
 
+    // add edge to graph
     void addEdge(int u, int v){
         g[u][v] = 1;
     }
 
+    // print result of dfs
     void printResult(ofstream& outfile){
         for(int i = 0; i < result.size(); i++){
             outfile << result[i] << " ";
@@ -127,6 +129,7 @@ int main(int argc, char* argv[]){
         cout << "Added edge " << i << " -> " << j << endl;
     }
 
+    // run dfs and put results in output file
     g.dfs(0);
     g.printResult(outfile);
 
