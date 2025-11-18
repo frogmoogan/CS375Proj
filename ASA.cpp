@@ -49,28 +49,24 @@
 				add neighbor to openList in order
 
 			//how can we ensure the best path exists?
-			
-
-
-
-
-
-
-
  }
   
  */
-
+#include <vector>
 #include <iostream>
+#include <fstream>
+#include <sstream>
 using namespace std;
 
 class Graph {
 private:
     int numNodes;
     int start;
+    int finish;
     int roundsCount;
     vector <vector<int>> adjMatrix;
-    vector <int> distance;
+    vector <vector<int>> coordinates;
+    vector <int> distance;	//distance relative from start
     vector <int> hueristic>;
     vector <int> totalVal;
     vector <int> openList;	//nodes in queue
@@ -78,38 +74,132 @@ private:
     vector <int> path;		//to store optimal path solution
 
 public:
-    void compute_hueristic(int n)
-    {
-
+    //constructor for Graph
+    Graph(int s, int f){
+	    start = s;
+	    finish = f;
     }
 
-    //running counter of distance
-    //based on priority queue, distance will be incremented +1 for every round
-    //roundsCount intialized to 0 in main
 
-    void compute_distance(int n){
-	/*
-	int tempdist = 0;
-
-	//check adjency matrix's row, direct 1 degree neighbor
-    	for (int i = 1; i < numNodes + 1; i++){
-		if (adjMatrix[n + 1][i] == 1){
-			distance[n] = 1;
-		}
-	}
-	*/
-
+    //shld we use eculidian formula (?)
+    void compute_hueristic(int n)
+    {
 	
     }
 
-
-    void ASA(int s, int f){
+    //figure out how to compute distance for each node
+    void compute_distance(int n){
     
     }
+
+    void compute_totalVal(int n){
+    	totalVal[n] = hueristic[n] + distance[n];
+    }
+
+
+    void add_openList(int n){
+    
+    }
+
+    void remove_openList(int n){
+    
+    }
+
+    void add_closedList(int n){
+    
+    }
+    //some type of merge sort to ensure openList is a priority queue
+    void sort_openList(){
+    
+    }
+    
+
+
+// s for starting
+// f for finishing node
+void ASA(){
+	
+	//intialize values for starting node
+	compute_hueristic(start);
+	compute_totalVal(start);
+
+	//add starting node to openlist
+	openList.insert(s, hueristic[s]);
+		
+	while (!openList.empty()){
+		/*
+		explore node at the top(should be smallest total value
+		curr = node at the top
+
+		if curr = goal{
+			return path;
+		}
+
+		//move curr node from open to closed list
+
+		//check nieghboring potential paths
+		for each neiighbro of current:
+			if neighbor in closedList;
+			continue;
+
+			//calculate neighbors t score
+			neighbor.total = curr.start + 1 + neighbor.heuristic;
+
+			if neighbor not in openList:
+				add neighbor to openList in order
+		*/
+	
+    }
+
+    void printResult(ofstream& outfile){
+        for(int i = 0; i < path.size(); i++){
+            outfile << path [i] << " -> ";
+        }
+        outfile << endl;
+        return;
+    }
+
 };
 
-int main()
+int main(int argc, , char* argv[])
 {
-    
+    ifstream inputFile(arv[1]);
+    ofstream outfile(argv[2]);
+
+    string firstline;
+    int s;
+    inputFile >> s;
+
+    //graph wants start and finish node before constructed
+    Graph g(1, 9);
+    int i, j, d;
+
+    // get edges from input file
+    while(getline(inputFile, firstline){
+	if (firstline  == "//coordinate location node"){
+		break;
+	}
+
+	inputFile >> i >> j >> d;
+	adjMatrix[i][j] = d;
+        
+    }
+
+    //get coordinates
+    while(getline(inputFile, firstline){
+	if (firstline == "//end of file"){
+	    break;
+	}
+
+	inpuFile >> d >> i >> j;
+	coordinates[i][j] = d;
+
+    }
+
+
+    //run asa and put results in output file
+    g.ASA();
+    g.printResult(outfile);
+
     return 0;
 }
