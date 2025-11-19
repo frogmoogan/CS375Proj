@@ -53,7 +53,7 @@
   
 */
 
-
+#include <algorithm>
 #include <vector>
 #include <iostream>
 #include <fstream>
@@ -88,7 +88,7 @@ public:
 	double x1, x2, y1, y2;
 
 	for (int i = 0; i < coordinates.size(); i++){
-		for (int j = 0; j < coordinates.size(); j++{	
+		for (int j = 0; j < coordinates.size(); j++){	
 			if (coordinates[i][j] == n){
 				x1 = i;
 				y1 = j;
@@ -103,6 +103,28 @@ public:
 	//calculate using euclidean distance
 	hueristic[n] = sqrt(pow((x1-x2), 2) + pow ((y1-y2),2));
     }
+
+    //setter functions
+    void initMatrices(int n) {
+    	numNodes = n;
+    	adjMatrix.assign(n, vector<int>(n, 0));
+    	coordinates.assign(n, vector<int>(n, 0));
+    }
+
+
+    void setEdge(int i, int j, int weight) {
+    	adjMatrix[i][j] = weight;
+    }
+
+    void setCoordinate(int n, int x, int y) {
+    	coordinates[x][y] = n;
+}
+
+
+
+
+
+
 
     void compute_distance(int n){
     	int tempdist = 1000;
@@ -131,15 +153,10 @@ public:
     void remove_openList(int n){
     	for (int i = 0; i < openList.size(); i++){
 		if (openList[i] == n){
-			openList.erase(i);
+			openList.erase(openList.begin() + i);
 			return;
 		}
 	}
-    }
-
-    // Comparator function for totalVal order
-    bool comp(int a, int b){
-    	return totalVal[a] < totalVal[b];
     }
 
     //check if closedList has this node
@@ -154,8 +171,10 @@ public:
     }
     //some type of merge sort to ensure openList is a priority queue
     void sort_openList(){
-    	sort(g.begin(), v.end(), comp);
-    }
+    	sort(openList.begin(), openList.end(), [&](int a, int b) {
+             return totalVal[a] < totalVal[b];
+         });
+}
     
 
 
@@ -169,7 +188,7 @@ void ASA(){
 	compute_totalVal(start);
 
 	//add starting node to openlist
-	openList.insert(s, hueristic[s]);
+	openList.push_back(start);
 		
 	int curr;
 	while (!openList.empty()){
@@ -196,7 +215,7 @@ void ASA(){
 	
 		//for each neighbor of current:
 		for (int i = 0; i < openList.size();i++){
-			if (closedListsearch(i)){
+			if (closedListsearch(openList[i])){
 				continue;	
 			}
 
@@ -206,9 +225,10 @@ void ASA(){
 			compute_totalVal(i);
 			
 		}
-			
+				
 				
     }
+}
 
     void printResult(ofstream& outfile){
         for(int i = 0; i < path.size(); i++){
@@ -222,40 +242,37 @@ void ASA(){
 
 int main(int argc, char* argv[])
 {
-    ifstream inputFile(arv[1]);
+    ifstream inputFile(argv[1]);
     ofstream outfile(argv[2]);
 
     string firstline;
     int s;
     inputFile >> s;
 
-    //intialize all values in adjMatrix to be 0
-    adjMatrix = 0;
 
     //graph wants start and finish node before constructed
     Graph g(1, 9);
+    g.initMatrices(s);
     int i, j, d;
 
     // get edges from input file
-    while(getline(inputFile, firstline){
+    while(getline(inputFile, firstline)){
 	if (firstline  == "//coordinate location node"){
 		break;
 	}
 
 	inputFile >> i >> j >> d;
-	adjMatrix[i][j] = d;
-        
+        g.setEdge(i,j,d); 
     }
 
     //get coordinates
-    while(getline(inputFile, firstline){
+    while(getline(inputFile, firstline)){
 	if (firstline == "//end of file"){
 	    break;
 	}
 
-	inpuFile >> d >> i >> j;
-	coordinates[i][j] = d;
-
+	inputFile >> d >> i >> j;
+	g.setCoordinate(d,i,j);
     }
 
 
