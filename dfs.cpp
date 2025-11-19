@@ -75,6 +75,7 @@ class Graph {
 
     }
 
+
     // add edge to graph
     void addEdge(int u, int v){
         g[u][v] = 1;
@@ -93,9 +94,22 @@ class Graph {
 
 
 
-
-
 };
+
+ class Edge{
+
+        private:
+        int v; // destination node
+        int weight; // weight of edge
+       
+
+        public:
+
+        Edge(int v, int weight):
+        v(v),
+        weight(weight){}     
+
+    };
 
 
 int main(int argc, char* argv[]){
@@ -119,15 +133,31 @@ int main(int argc, char* argv[]){
     // get number of nodes from top of input file
     int s;
     infile >> s;
+    infile.ignore();
     Graph g(s);
-    int i, j;
+    int i, j, k;
 
-    // get edges from input file
-    while(infile >> i >> j){
+    vector<vector<Edge>> edges(s); // vector of edges for each node
+
+    string line;
+    while(getline(infile, line)){
+    istringstream iss(line);
+
+    iss >> i >> j;
+    
+    if(iss >> k){
+        // there is a weight
         g.addEdge(i, j);
+        edges[i].push_back({j, k});
+    } else {
 
-        cout << "Added edge " << i << " -> " << j << endl;
+        // no weight, just add edge
+        g.addEdge(i, j);
+        edges[i].push_back({j, 0});
     }
+    
+    cout << "Added edge " << i << " -> " << j << endl;
+}
 
     // run dfs and put results in output file
     g.dfs(0);
