@@ -51,11 +51,14 @@
 			//how can we ensure the best path exists?
  }
   
- */
+*/
+
+
 #include <vector>
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <cmath>
 using namespace std;
 
 class Graph {
@@ -67,7 +70,7 @@ private:
     vector <vector<int>> adjMatrix;
     vector <vector<int>> coordinates;
     vector <int> distance;	//distance relative from start
-    vector <int> hueristic>;
+    vector <int> hueristic;
     vector <int> totalVal;
     vector <int> openList;	//nodes in queue
     vector <int> closedList;	//nodes whose paths have been explored
@@ -78,39 +81,80 @@ public:
     Graph(int s, int f){
 	    start = s;
 	    finish = f;
-    }
+    } 
 
-
-    //shld we use eculidian formula (?)
     void compute_hueristic(int n)
     {
-	
+	double x1, x2, y1, y2;
+
+	for (int i = 0; i < coordinates.size(); i++){
+		for (int j = 0; j < coordinates.size(); j++{	
+			if (coordinates[i][j] == n){
+				x1 = i;
+				y1 = j;
+			}
+
+			if (coordinates[i][j] == finish){
+				x2 = i;
+				y2 = j;
+			}
+		}
+	}
+	//calculate using euclidean distance
+	hueristic[n] = sqrt(pow((x1-x2), 2) + pow ((y1-y2),2));
     }
 
-    //figure out how to compute distance for each node
     void compute_distance(int n){
-    
+    	int tempdist = 1000;
+
+    	//case direct neigbor
+    	if (adjMatrix[n][start] > 0){
+		distance[n] = adjMatrix[n][start];
+	}
+	//case not direct neighbor
+	else{
+		//iterate through row and update tempdist if it is smaller
+		for (int i = 1; i <adjMatrix.size(); i++){
+			if (adjMatrix[n][i] + distance[i] > 0 ){
+				if (adjMatrix[n][i] < tempdist){
+					tempdist = adjMatrix[n][i] + distance[i];
+				}
+			}
+		}
+	}
     }
 
     void compute_totalVal(int n){
     	totalVal[n] = hueristic[n] + distance[n];
     }
 
-
-    void add_openList(int n){
-    
-    }
-
     void remove_openList(int n){
-    
+    	for (int i = 0; i < openList.size(); i++){
+		if (openList[i] == n){
+			openList.erase(i);
+			return;
+		}
+	}
     }
 
-    void add_closedList(int n){
-    
+    // Comparator function for totalVal order
+    bool comp(int a, int b){
+    	return totalVal[a] < totalVal[b];
+    }
+
+    //check if closedList has this node
+    bool closedListsearch(int n){
+    	for (int i = 0; i <closedList.size(); i++){
+		if (closedList[i] == n){
+			return true;
+		}
+	}
+	//did not find element
+	return false;
     }
     //some type of merge sort to ensure openList is a priority queue
     void sort_openList(){
-    
+    	sort(g.begin(), v.end(), comp);
     }
     
 
@@ -121,34 +165,49 @@ void ASA(){
 	
 	//intialize values for starting node
 	compute_hueristic(start);
+	compute_distance(start);
 	compute_totalVal(start);
 
 	//add starting node to openlist
 	openList.insert(s, hueristic[s]);
 		
+	int curr;
 	while (!openList.empty()){
-		/*
-		explore node at the top(should be smallest total value
-		curr = node at the top
+		curr = openList.front();
+		path.push_back(curr);
 
-		if curr = goal{
-			return path;
+		if (curr == finish){
+			return;
 		}
 
 		//move curr node from open to closed list
+		remove_openList(curr);
+		closedList.push_back(curr);
 
-		//check nieghboring potential paths
-		for each neiighbro of current:
-			if neighbor in closedList;
-			continue;
+		//check neighboring potential paths of curr
+		for (int i = 0; i < adjMatrix.size(); i++){
+			if (adjMatrix[curr][i] > 0){
+				openList.push_back(i);
+			}
+		}
 
-			//calculate neighbors t score
-			neighbor.total = curr.start + 1 + neighbor.heuristic;
-
-			if neighbor not in openList:
-				add neighbor to openList in order
-		*/
+		//make sure list is sorted b4 proceeding
+		sort_openList();
 	
+		//for each neighbor of current:
+		for (int i = 0; i < openList.size();i++){
+			if (closedListsearch(i)){
+				continue;	
+			}
+
+			//claculate neighbors t score
+			compute_distance(i);
+			compute_hueristic(i);
+			compute_totalVal(i);
+			
+		}
+			
+				
     }
 
     void printResult(ofstream& outfile){
@@ -161,7 +220,7 @@ void ASA(){
 
 };
 
-int main(int argc, , char* argv[])
+int main(int argc, char* argv[])
 {
     ifstream inputFile(arv[1]);
     ofstream outfile(argv[2]);
@@ -169,6 +228,9 @@ int main(int argc, , char* argv[])
     string firstline;
     int s;
     inputFile >> s;
+
+    //intialize all values in adjMatrix to be 0
+    adjMatrix = 0;
 
     //graph wants start and finish node before constructed
     Graph g(1, 9);
