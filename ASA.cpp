@@ -83,7 +83,27 @@ public:
 	    finish = f;
     } 
 
-    void compute_hueristic(int n)
+    
+    //setter functions
+    void initMatrices(int n) {
+    	numNodes = n;
+    	adjMatrix.assign(n, vector<int>(n, 0));
+    	coordinates.assign(n, vector<int>(n, 0));
+	distance.assign(numNodes, 1000);
+	hueristic.assign(numNodes, 0);
+	totalVal.assign(numNodes, 0);
+    }
+
+
+    void setEdge(int i, int j, int weight) {
+    	adjMatrix[i][j] = weight;
+    }
+
+    void setCoordinate(int n, int x, int y) {
+    	coordinates[x][y] = n;
+}
+
+void compute_hueristic(int n)
     {
 	double x1, x2, y1, y2;
 
@@ -103,24 +123,6 @@ public:
 	//calculate using euclidean distance
 	hueristic[n] = sqrt(pow((x1-x2), 2) + pow ((y1-y2),2));
     }
-
-    //setter functions
-    void initMatrices(int n) {
-    	numNodes = n;
-    	adjMatrix.assign(n, vector<int>(n, 0));
-    	coordinates.assign(n, vector<int>(n, 0));
-    }
-
-
-    void setEdge(int i, int j, int weight) {
-    	adjMatrix[i][j] = weight;
-    }
-
-    void setCoordinate(int n, int x, int y) {
-    	coordinates[x][y] = n;
-}
-
-
 
 
 
@@ -169,6 +171,18 @@ public:
 	//did not find element
 	return false;
     }
+
+
+    bool openListsearch(int n){
+    	for (int i = 0; i < openList.size(); i++){
+		if (openList[i] == n){
+			return true;
+		}
+	}
+	//did not find element
+	return false;
+    }
+
     //some type of merge sort to ensure openList is a priority queue
     void sort_openList(){
     	sort(openList.begin(), openList.end(), [&](int a, int b) {
@@ -205,27 +219,15 @@ void ASA(){
 
 		//check neighboring potential paths of curr
 		for (int i = 0; i < adjMatrix.size(); i++){
-			if (adjMatrix[curr][i] > 0){
+			if (adjMatrix[curr][i] > 0 && !openListsearch(i) && !closedListsearch(i)){
+				compute_distance(i);
+				compute_hueristic(i);
+				compute_totalVal(i);
 				openList.push_back(i);
 			}
 		}
 
-		//make sure list is sorted b4 proceeding
-		sort_openList();
-	
-		//for each neighbor of current:
-		for (int i = 0; i < openList.size();i++){
-			if (closedListsearch(openList[i])){
-				continue;	
-			}
-
-			//claculate neighbors t score
-			compute_distance(i);
-			compute_hueristic(i);
-			compute_totalVal(i);
-			
-		}
-				
+		sort_openList();			
 				
     }
 }
