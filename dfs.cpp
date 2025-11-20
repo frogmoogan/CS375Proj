@@ -32,7 +32,7 @@ return
 #include <sstream>
 using namespace std;
 
-
+// graph class to store graph info
 class Graph {
 
     private:
@@ -44,11 +44,15 @@ class Graph {
 
     public:
 
+    // graph constructor
+
     Graph(int n): 
     n(n),
     g(n, vector<int>(n,0)),
     color(n, "white"),
     parent(n, -1){}
+
+    // depth first search function
 
     void dfs(int u){
         // If node already visited or fully discovered, return
@@ -96,6 +100,7 @@ class Graph {
 
 };
 
+// edge class to store edge info
  class Edge{
 
         private:
@@ -114,6 +119,7 @@ class Graph {
 
 int main(int argc, char* argv[]){
 
+    // check if correct number of arguments provided
     if(argc != 3){
         cout << "Incorrect number of arguments. Must provide input and output file." << endl;
         return 1;
@@ -122,11 +128,13 @@ int main(int argc, char* argv[]){
     ifstream infile(argv[1]);
     ofstream outfile(argv[2]);
 
+    // check if input file is valid
     if(!infile){
         cout << "Could not open input file." << endl;
         return 1;
     }
 
+    // check if output file is valid
     if(!outfile){
         cout << "Could not open output file." << endl;
         return 1;
@@ -141,6 +149,7 @@ int main(int argc, char* argv[]){
 
     vector<vector<Edge>> edges(s); // vector of edges for each node
 
+    // get info from input file
     string line;
     while(getline(infile, line)){
     istringstream iss(line);
