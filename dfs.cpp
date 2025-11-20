@@ -124,10 +124,12 @@ int main(int argc, char* argv[]){
 
     if(!infile){
         cout << "Could not open input file." << endl;
+        return 1;
     }
 
     if(!outfile){
         cout << "Could not open output file." << endl;
+        return 1;
     }
 
     // get number of nodes from top of input file
