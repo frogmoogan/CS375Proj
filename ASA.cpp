@@ -109,7 +109,7 @@ void compute_hueristic(int n)
     {
 	//let x1,y1 = n coords
 	//let x2,y2 = end coords
-	double x1, x2, y1, y2;
+	int x1, x2, y1, y2;
 
 	x1 = coordinates[n][0];
 	x2 = coordinates[finish][0];
@@ -119,9 +119,6 @@ void compute_hueristic(int n)
 	//calculate using euclidean distance
 	hueristic[n] = sqrt(pow((x1-x2), 2) + pow ((y1-y2),2));
     }
-
-
-
 
 
     void compute_distance(int n){
@@ -271,13 +268,15 @@ int main(int argc, char* argv[])
 	}
 
 	inputFile >> d >> i >> j;
+	//for debugging
+	cout << "node " << d << " x: " << i << " y: " << j <<endl;
 	g.setCoordinate(d,i,j);
     }
 
 
     //run asa and put results in output file
-    g.ASA();
-    g.printResult(outfile);
+    //g.ASA();
+    //g.printResult(outfile);
 
     return 0;
 }
