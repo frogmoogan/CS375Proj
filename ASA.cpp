@@ -68,6 +68,7 @@ private:
     int finish;
     //int roundsCount;
     vector <vector<int>> adjMatrix;
+
     vector <vector<int>> coordinates;
     vector <int> distance;	//distance relative from start
     vector <int> hueristic;
@@ -87,9 +88,9 @@ public:
     //setter functions
     void initMatrices(int n) {
     	numNodes = n;
-    	adjMatrix.assign(n, vector<int>(n, 0));
+    	adjMatrix.assign(n, vector<int>(n , 0));
     	coordinates.assign(n, vector<int>(n, 0));
-	distance.assign(numNodes, 0);
+	distance.assign(numNodes , 0);
 	hueristic.assign(numNodes, 0);
 	totalVal.assign(numNodes, 0);
 
@@ -252,9 +253,10 @@ int main(int argc, char* argv[])
     int s;
     inputFile >> s;
 
+	
 
     //graph wants start and finish node before constructed
-    Graph g(1, 9);
+    Graph g(0, 8);
     g.initMatrices(s);
     int i, j, d;
 
