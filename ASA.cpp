@@ -68,8 +68,7 @@ private:
     int finish;
     //int roundsCount;
     vector <vector<int>> adjMatrix;
-
-    vector <vector<int>> coordinates;
+    vector<vector<int>> coordinates;
     vector <int> distance;	//distance relative from start
     vector <int> hueristic;
     vector <int> totalVal;
@@ -89,7 +88,7 @@ public:
     void initMatrices(int n) {
     	numNodes = n;
     	adjMatrix.assign(n, vector<int>(n , 0));
-    	coordinates.assign(n, vector<int>(n, 0));
+	coordinates.assign(n, vector<int>(2, 0));
 	distance.assign(numNodes , 0);
 	hueristic.assign(numNodes, 0);
 	totalVal.assign(numNodes, 0);
@@ -102,26 +101,21 @@ public:
     }
 
     void setCoordinate(int n, int x, int y) {
-    	coordinates[x][y] = n;
+    	coordinates[n][0] = x;
+	coordinates[n][1] = y;
 }
-
+	
 void compute_hueristic(int n)
     {
+	//let x1,y1 = n coords
+	//let x2,y2 = end coords
 	double x1, x2, y1, y2;
 
-	for (int i = 0; i < coordinates.size(); i++){
-		for (int j = 0; j < coordinates.size(); j++){	
-			if (coordinates[i][j] == n){
-				x1 = i;
-				y1 = j;
-			}
+	x1 = coordinates[n][0];
+	x2 = coordinates[finish][0];
+	y1 = coordinates[n][1];
+	y2 = coordinates[finish][1];
 
-			if (coordinates[i][j] == finish){
-				x2 = i;
-				y2 = j;
-			}
-		}
-	}
 	//calculate using euclidean distance
 	hueristic[n] = sqrt(pow((x1-x2), 2) + pow ((y1-y2),2));
     }
