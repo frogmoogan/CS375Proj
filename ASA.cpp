@@ -59,6 +59,10 @@
 #include <fstream>
 #include <sstream>
 #include <cmath>
+#include <string>
+//for printf
+#include <cstdio>
+
 using namespace std;
 
 class Graph {
@@ -182,6 +186,11 @@ void compute_hueristic(int n)
              return totalVal[a] < totalVal[b];
          });
 }
+
+
+int get_edge(int x, int y){
+	return adjMatrix[x][y];
+}
     
 
 
@@ -223,13 +232,18 @@ void ASA(){
 		sort_openList();			
 				
     }
+	cout << "end of ASA reached" << endl;
 }
 
     void printResult(ofstream& outfile){
         for(int i = 0; i < path.size(); i++){
-            outfile << path [i] << " -> ";
+		//prints to output.txt
+            outfile << "-> " << path [i] << " ";
+	    //rpints to terminal
+	    cout << " -> " << path[i] << " ";
         }
         outfile << endl;
+	cout << endl;
         return;
     }
 
@@ -240,43 +254,79 @@ int main(int argc, char* argv[])
     ifstream inputFile(argv[1]);
     ofstream outfile(argv[2]);
 
-    string firstline;
+    if (!inputFile.is_open()) {
+    cerr << "FAILED TO OPEN INPUT FILE\n";
+    return 1;
+    }
+
+    //string firstline;
     int s;
     inputFile >> s;
 
-	
+    inputFile.ignore(numeric_limits<streamsize>::max(), '\n');
+
 
     //graph wants start and finish node before constructed
     Graph g(0, 8);
     g.initMatrices(s);
     int i, j, d;
+    string line = "";
 
-    // get edges from input file
-    while(getline(inputFile, firstline)){
-	if (firstline  == "//coordinate location node"){
+        // get edges from input file
+    while(getline(inputFile, line)){
+	//printf("curr in edge loop");
+	if ( line  == "//coordinate location node"){
+		//printf("exits coord loop \n");
 		break;
 	}
-
-	inputFile >> i >> j >> d;
-        g.setEdge(i,j,d); 
-    }
-
-    //get coordinates
-    while(getline(inputFile, firstline)){
-	if (firstline == "//end of file"){
-	    break;
+	if (line.empty()){
+	       	continue;
+	}
+        if (line.rfind("//", 0) == 0){
+	       	continue;
 	}
 
-	inputFile >> d >> i >> j;
+	stringstream ss(line);
+	ss >> i >> j >> d;
 	//for debugging
-	cout << "node " << d << " x: " << i << " y: " << j <<endl;
+	//cout << "edge " << i << " to " << j << " " << d << " units"<< endl;
+	
+        g.setEdge(i,j,d); 
+	//to make sure edge was initialized properly
+	//printf("coord dist %d \n", g.get_edge(i,j));
+    }
+
+    //cout <<"got edges from input file" << endl;
+    //printf("printf works test\n ");
+
+    //get coordinates
+    while(getline(inputFile, line)){
+	//printf("curr in coord loop");
+	if ( line == "//end of file"){
+	    break;
+	}
+	if (line.empty()){
+	       	continue;
+	}
+        if (line.rfind("//", 0) == 0){
+	       	continue;
+	}
+
+	stringstream ss(line);
+	ss >> d >> i >> j;
+	//for debugging
+	//cout << "node " << d << " x: " << i << " y: " << j <<endl;
 	g.setCoordinate(d,i,j);
     }
 
+    //printf("printf test2\n");
+    //cout << "got coordinates from input file" <<endl;
 
     //run asa and put results in output file
-    //g.ASA();
-    //g.printResult(outfile);
+    g.ASA();
+    //cout << "ASA run done" << endl;
 
+    g.printResult(outfile);
+    //cout << "print results done" << endl;
     return 0;
 }
