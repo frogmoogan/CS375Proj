@@ -1,28 +1,28 @@
 /*     DFS Pseudocode
 
 FUNCTION DFS(int u)
+
 // All nodes already initialized to white (unvisited)
 
 // If node already visited, skip
-IF color[u] == gray OR color[u] == red:
-	return
-END IF
+
+IF color[u] == gray OR color[u] == red: return false;
+IF u == goal: return true
 
 // Set node to visited
 color[u] = gray
 
-FOR v = 0 to number of nodes:
-	IF graph[u][v] == 1:
-		DFS(v)
-	END IF
+FOR each v in adj[u]:
+parent[v] = u
+IF DFS(v): return true
 END FOR
 
 // Set node to fully discovered
 color[u] = red	
-
-return
+return false;
 
 */
+
 
 
 #include <iostream>
@@ -37,58 +37,76 @@ class Graph {
 
     private:
     int n; // number of nodes
-    vector<vector<int>> g;// adjacency matrix
+    int dest; // destination node
+    vector<vector<int>> g;// adjacency list
     vector<string> color; // color
-    vector<int> parent; // parent
+    
     vector<int> result; // result from DFS
 
     public:
 
+    vector<int> parent; // parent
     // graph constructor
 
-    Graph(int n): 
+    Graph(int n, int dest): 
     n(n),
-    g(n, vector<int>(n,0)),
+    dest(dest),
+    g(n),
     color(n, "white"),
     parent(n, -1){}
 
     // depth first search function
 
-    void dfs(int u){
+    bool dfs(int u){
         // If node already visited or fully discovered, return
         if(color[u] == "gray" || color[u] == "red"){
-            return;
+            return false;
+        }
+        if(u == dest){
+            return true;
+        
+
         }
 
         // Set node to visited
         color[u] = "gray";
-        result.push_back(u);
-
-
 
         // Search for neighbors v of node u and run DFS on them
-        for(int v = 0; v < n; v++){
-            if(g[u][v] == 1){
-                dfs(v);
+        for(int v = 0; v < g[u].size(); v++){
+                int neighbor = g[u][v];
+
+                if(color[neighbor] == "white"){
+                parent[neighbor] = u;
+                if(dfs(neighbor)){
+                    return true;
+                }
             }
+
         }
 
         // Set node to fully discovered; all of u's neighbors will have been visited after the for loop
         color[u] = "red";
-        return;
+        return false;
 
     }
 
 
     // add edge to graph
     void addEdge(int u, int v){
-        g[u][v] = 1;
+        g[u].push_back(v);
     }
 
     // print result of dfs
     void printResult(ofstream& outfile){
-        for(int i = 0; i < result.size(); i++){
-            outfile << result[i] << " ";
+        vector<int> path;
+        int current = dest;
+        while(current != -1){
+            path.push_back(current);
+            current = parent[current];
+        }
+
+        for(int i = path.size()-1; i > -1; i--){
+            outfile << path[i] << " ";
         }
 
         outfile << endl;
@@ -141,10 +159,12 @@ int main(int argc, char* argv[]){
     }
 
     // get number of nodes from top of input file
-    int s;
+    int s, d;
     infile >> s;
     infile.ignore();
-    Graph g(s);
+    infile >> d;
+    infile.ignore();
+    Graph g(s, d);
     int i, j, k;
 
     vector<vector<Edge>> edges(s); // vector of edges for each node
@@ -167,7 +187,8 @@ int main(int argc, char* argv[]){
         edges[i].push_back({j, 0});
     }
     
-    cout << "Added edge " << i << " -> " << j << endl;
+    // print added edges to make sure info stored correctly
+    /*cout << "Added edge " << i << " -> " << j << endl;*/
 }
 
     // run dfs and put results in output file
