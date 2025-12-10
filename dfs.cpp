@@ -159,12 +159,10 @@ int main(int argc, char* argv[]){
     }
 
     // get number of nodes from top of input file
-    int s, d;
+    int s;
     infile >> s;
     infile.ignore();
-    infile >> d;
-    infile.ignore();
-    Graph g(s, d);
+    Graph g(s, 4);
     int i, j, k;
 
     vector<vector<Edge>> edges(s); // vector of edges for each node
