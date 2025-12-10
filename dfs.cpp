@@ -40,12 +40,12 @@ class Graph {
     int dest; // destination node
     vector<vector<int>> g;// adjacency list
     vector<string> color; // color
-    
+    vector<int> parent; // parent
     vector<int> result; // result from DFS
 
     public:
 
-    vector<int> parent; // parent
+    
     // graph constructor
 
     Graph(int n, int dest): 
@@ -108,6 +108,7 @@ class Graph {
         }
 
         for(int i = path.size()-1; i > -1; i--){
+            // char curr = path[i] + 65;
             outfile << path[i] << " ";
         }
 
