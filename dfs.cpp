@@ -94,6 +94,8 @@ class Graph {
     // add edge to graph
     void addEdge(int u, int v){
         g[u].push_back(v);
+        // Push back (v,u) as well for undirected graph
+        g[v].push_back(u);
     }
 
     // print result of dfs
@@ -162,7 +164,7 @@ int main(int argc, char* argv[]){
     int s;
     infile >> s;
     infile.ignore();
-    Graph g(s, 4);
+    Graph g(s, 23);
     int i, j, k;
 
     vector<vector<Edge>> edges(s); // vector of edges for each node
