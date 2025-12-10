@@ -36,12 +36,12 @@ using namespace std;
 class Graph {
 
     private:
-    int n; // number of nodes
-    int dest; // destination node
-    vector<vector<int>> g;// adjacency list
-    vector<string> color; // color
-    vector<int> parent; // parent
-    vector<int> result; // result from DFS
+    int n;                      // number of nodes
+    int dest;                   // destination node
+    vector<vector<int>> g;      // adjacency list
+    vector<string> color;       // color
+    vector<int> parent;         // parent
+    vector<int> result;         // result from DFS
 
     public:
 
@@ -49,11 +49,11 @@ class Graph {
     // graph constructor
 
     Graph(int n, int dest): 
-    n(n),
-    dest(dest),
-    g(n),
-    color(n, "white"),
-    parent(n, -1){}
+    n(n),                       // initialize n to n
+    dest(dest),                 // initialize dest to dest
+    g(n),                       // initialize n rows for the adjacency list
+    color(n, "white"),          // initialize the color of each node to white
+    parent(n, -1){}             // initialize the parent of each node to -1
 
     // depth first search function
 
@@ -100,16 +100,15 @@ class Graph {
 
     // print result of dfs
     void printResult(ofstream& outfile){
-        vector<int> path;
         int current = dest;
         while(current != -1){
-            path.push_back(current);
+            result.push_back(current);
             current = parent[current];
         }
 
-        for(int i = path.size()-1; i > -1; i--){
+        for(int i = result.size()-1; i > -1; i--){
             // char curr = path[i] + 65;
-            outfile << path[i] << " ";
+            outfile << result[i] << " ";
         }
 
         outfile << endl;
@@ -121,21 +120,6 @@ class Graph {
 
 };
 
-// edge class to store edge info
- class Edge{
-
-        private:
-        int v; // destination node
-        int weight; // weight of edge
-       
-
-        public:
-
-        Edge(int v, int weight):
-        v(v),
-        weight(weight){}     
-
-    };
 
 
 int main(int argc, char* argv[]){
@@ -168,7 +152,6 @@ int main(int argc, char* argv[]){
     Graph g(s, 23);
     int i, j, k;
 
-    vector<vector<Edge>> edges(s); // vector of edges for each node
 
     // get info from input file
     string line;
@@ -180,12 +163,11 @@ int main(int argc, char* argv[]){
     if(iss >> k){
         // there is a weight
         g.addEdge(i, j);
-        edges[i].push_back({j, k});
     } else {
 
         // no weight, just add edge
         g.addEdge(i, j);
-        edges[i].push_back({j, 0});
+
     }
     
     // print added edges to make sure info stored correctly
