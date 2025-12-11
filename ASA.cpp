@@ -70,9 +70,15 @@ private:
     int numNodes;
     int start;
     int finish;
+    //used to calculate distance
+    //int parent; 
+
     //int roundsCount;
-    vector <vector<int>> adjMatrix;
-    vector<vector<int>> coordinates;
+    //vector <vector<int>> adjMatrix;
+
+    vector <int> parent;	   //used to calculate path later
+    vector<vector<int>> neighbors; //improved version of adjMatrix
+    vector<vector<int>> coordinates;	
     vector <int> distance;	//distance relative from start
     vector <int> hueristic;
     vector <int> totalVal;
@@ -87,11 +93,34 @@ public:
 	    finish = f;
     } 
 
-    
+   void new_path(int s, int f){	
+	//if it is not empty, ASA has been called before
+	//clear lists, distance, path, and hueristics
+	if (!closedList.empty()){
+		distance.clear();
+		hueristic.clear();
+		totalVal.clear();
+		openList.clear();
+		closedList.clear();
+		path.clear();
+		neighbors.clear();
+		parent.clear();
+	}
+   } 
+
+    int get_start(){
+    	return start;
+    }
+
+    int get_finish(){
+    	return finish;
+    }
+
     //setter functions
     void initMatrices(int n) {
     	numNodes = n;
-    	adjMatrix.assign(n, vector<int>(n , 0));
+	neighbors.resize(n);
+    	parent.assign(numNodes, -1);
 	coordinates.assign(n, vector<int>(2, 0));
 	distance.assign(numNodes , 0);
 	hueristic.assign(numNodes, 0);
@@ -101,7 +130,8 @@ public:
 
 
     void setEdge(int i, int j, int weight) {
-    	adjMatrix[i][j] = weight;
+    	neighbors[i].push_back(j);
+	distance[j] = weight;
     }
 
     void setCoordinate(int n, int x, int y) {
@@ -126,9 +156,28 @@ void compute_hueristic(int n)
 
 
     void compute_distance(int n){
-    	int tempdist = 1000;
+    	int tempdist = 0;
+	int lastnode = 0;
 
+	
+	if(n == start){
+		distance[n] = 0;
+		return;
+	}
+
+	//add up distances of current path 
+	for (int x: path){
+		tempdist += distance[x];
+		lastnode = x;
+	}
+	//dont forget to add distance btwn curr path and potential node
+	tempdist+= distance[n];
+
+	//update results in distance array 
+	distance[n] = tempdist;
+	
     	//case direct neigbor
+	/*
     	if (adjMatrix[n][start] > 0){
 		distance[n] = adjMatrix[n][start];
 	}
@@ -142,7 +191,11 @@ void compute_hueristic(int n)
 				}
 			}
 		}
+		distance[n] = tempdist;
 	}
+	*/
+	
+
     }
 
     void compute_totalVal(int n){
@@ -187,10 +240,11 @@ void compute_hueristic(int n)
          });
 }
 
-
+/*
 int get_edge(int x, int y){
 	return adjMatrix[x][y];
 }
+*/
     
 
 
@@ -220,16 +274,21 @@ void ASA(){
 		closedList.push_back(curr);
 
 		//check neighboring potential paths of curr
-		for (int i = 0; i < adjMatrix.size(); i++){
-			if (adjMatrix[curr][i] > 0 && !openListsearch(i) && !closedListsearch(i)){
-				compute_distance(i);
-				compute_hueristic(i);
-				compute_totalVal(i);
-				openList.push_back(i);
-			}
+						
+		for ( int x: neighbors[curr]){
+			compute_distance(x);
+			compute_hueristic(x);
+			compute_totalVal(x);
+			openList.push_back(x);
 		}
-
-		sort_openList();			
+			
+		
+		sort_openList();	
+		for (int x: openList){
+			cout << "current openlist" << endl;
+			cout << "node: " << x << endl;
+		}
+		
 				
     }
 	cout << "end of ASA reached" << endl;
@@ -237,10 +296,13 @@ void ASA(){
 
     void printResult(ofstream& outfile){
         for(int i = 0; i < path.size(); i++){
-		//prints to output.txt
+		
+	    //prints to output.txt
+	    //outfile << "shortest path from " << g.get_start() << " to " << g.get_finish() << ": ";
             outfile << "-> " << path [i] << " ";
 	    //rpints to terminal
 	    cout << " -> " << path[i] << " ";
+	    //cout << "shortest path from " << g.get_start() << " to " << g.get_finish() << ": ";
         }
         outfile << endl;
 	cout << endl;
@@ -267,7 +329,7 @@ int main(int argc, char* argv[])
 
 
     //graph wants start and finish node before constructed
-    Graph g(0, 8);
+    Graph g(0, 23);
     g.initMatrices(s);
     int i, j, d;
     string line = "";
@@ -291,7 +353,10 @@ int main(int argc, char* argv[])
 	//for debugging
 	//cout << "edge " << i << " to " << j << " " << d << " units"<< endl;
 	
-        g.setEdge(i,j,d); 
+	//undirected graph
+        g.setEdge(i,j,d);
+        //g.setEdge(j,i,d);
+
 	//to make sure edge was initialized properly
 	//printf("coord dist %d \n", g.get_edge(i,j));
     }
@@ -326,7 +391,16 @@ int main(int argc, char* argv[])
     g.ASA();
     //cout << "ASA run done" << endl;
 
+    outfile << "shortest path from " << g.get_start() << " to " << g.get_finish() << ": ";
+    cout << "shortest path from " << g.get_start() << " to " << g.get_finish() << ": ";
     g.printResult(outfile);
     //cout << "print results done" << endl;
+    
+
+    //shelved temporary
+    //g.new_path(6,1);
+    //g.ASA();
+    //g.printResult(outfile);
+
     return 0;
 }
