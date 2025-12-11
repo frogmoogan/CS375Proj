@@ -108,6 +108,15 @@ public:
 	}
    }
 
+   void print_parent(){
+	int i = 0;
+   	cout << "parent list \n";
+	
+	for (int x: parent){
+	cout << i  << "'s parent is " << x << endl;
+	i++;
+	}
+   }
    void print_neighbors(){
 	cout << "neighbors list \n ";
    	for (const auto& row : neighbors) {
@@ -155,6 +164,7 @@ public:
 
     void setEdge(int i, int j, int weight) {
     	neighbors[i].push_back(j);
+	neighbors[j].push_back(i);
 	distance[j] = weight;
     }
 
@@ -296,24 +306,27 @@ void ASA(){
 		curr = openList.front();
 		//path.push_back(curr);
 
+
+		if (curr == finish){
+			//formulate path vector
+			//gen_path();
+			return;
+		}
+
 		//if closedList has this ovj, has already been explored
 		//continue
 		if (visitalready(curr)){
+			cout << "visit already, skip" << endl;
 			//remove top element
 			openList.erase(openList.begin());
 
 			//proceed to next node
 			continue;
 		}
-
-		if (curr == finish){
-			//formulate path vector
-			gen_path();
-			return;
-		}
-
+		
 		//move curr node from open to closed list
-		remove_openList(curr);
+		openList.erase(openList.begin());
+		//openList.clear();
 		closedList.push_back(curr);
 
 		//check neighboring potential paths of curr		
@@ -322,19 +335,30 @@ void ASA(){
 			compute_hueristic(x);
 			compute_totalVal(x);
 			openList.push_back(x);
-			parent[curr] = x;
-		}
+
+			if (!visitalready(x)){
+				//openList.push_back(x);
+				parent[x] = curr;
+			}
+			//parent[x] = curr;
 			
-		
+			/*
+			cout << "node: " << x << endl;
+			cout << " " << endl;
+			*/
+			
+		}
 		sort_openList();
 
 		//debug purposes
 			
+		
 		for (int x: openList){
 			cout << "current openlist" << endl;
 			cout << "node: " << x << endl;
 			cout << " " << endl;
 		}
+		
 		
 		
 				
@@ -404,7 +428,6 @@ int main(int argc, char* argv[])
 	
 	//undirected graph
         g.setEdge(i,j,d);
-        g.setEdge(j,i,d);
 
 	//to make sure edge was initialized properly
 	//printf("coord dist %d \n", g.get_edge(i,j));
@@ -437,11 +460,15 @@ int main(int argc, char* argv[])
     //cout << "got coordinates from input file" <<endl;
 
     //neighobors list is working
-    //g.print_neighbors();
+    g.print_neighbors();
 
     //run asa and put results in output file
     g.ASA();
     //cout << "ASA run done" << endl;
+    
+
+    g.gen_path();
+    g.print_parent();
 
     outfile << "shortest path from " << g.get_start() << " to " << g.get_finish() << ": ";
     cout << "shortest path from " << g.get_start() << " to " << g.get_finish() << ": ";
