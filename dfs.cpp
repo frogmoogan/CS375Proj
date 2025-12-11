@@ -30,6 +30,7 @@ return false;
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <chrono>
 using namespace std;
 
 // graph class to store graph info
@@ -106,12 +107,16 @@ class Graph {
             current = parent[current];
         }
 
+        outfile << "DFS Result: ";
+
         for(int i = result.size()-1; i > -1; i--){
             // char curr = path[i] + 65;
             outfile << result[i] << " ";
         }
 
-        outfile << endl;
+        outfile << endl <<endl;
+
+
 
         return;
     }
@@ -175,8 +180,12 @@ int main(int argc, char* argv[]){
 }
 
     // run dfs and put results in output file
+    auto start = std::chrono::steady_clock::now(); // Measure time taken for algorithm
     g.dfs(0);
+    auto end = std::chrono::steady_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
     g.printResult(outfile);
+    outfile << "Time Taken: " << duration.count() << " microseconds" << endl; // Write time taken to output file
 
 
 
