@@ -106,6 +106,30 @@ public:
 		neighbors.clear();
 		parent.clear();
 	}
+   }
+
+   void print_neighbors(){
+	cout << "neighbors list \n ";
+   	for (const auto& row : neighbors) {
+		cout << &row << ": ";
+    		for (int x : row) {
+       		cout << x << " ";
+    		}
+    	cout << "\n";
+	}
+
+   }
+
+   bool visitalready(int n){
+   	for (int x: closedList){
+		if (x == n){
+			return true;
+		}
+	}
+
+	//only returns if we never visited before
+	return false;
+   
    } 
 
     int get_start(){
@@ -211,6 +235,15 @@ void compute_hueristic(int n)
 	}
     }
 
+    void gen_path(){
+    	int curr = finish;
+        while(curr != -1){
+            path.push_back(curr);
+            curr = parent[curr];
+        }
+	//done path has been generated!
+    }
+
     //check if closedList has this node
     bool closedListsearch(int n){
     	for (int i = 0; i <closedList.size(); i++){
@@ -235,10 +268,8 @@ void compute_hueristic(int n)
 
     //some type of merge sort to ensure openList is a priority queue
     void sort_openList(){
-    	sort(openList.begin(), openList.end(), [&](int a, int b) {
-             return totalVal[a] < totalVal[b];
-         });
-}
+	    std::sort(openList.begin(), openList.end());
+    }
 
 /*
 int get_edge(int x, int y){
@@ -263,9 +294,21 @@ void ASA(){
 	int curr;
 	while (!openList.empty()){
 		curr = openList.front();
-		path.push_back(curr);
+		//path.push_back(curr);
+
+		//if closedList has this ovj, has already been explored
+		//continue
+		if (visitalready(curr)){
+			//remove top element
+			openList.erase(openList.begin());
+
+			//proceed to next node
+			continue;
+		}
 
 		if (curr == finish){
+			//formulate path vector
+			gen_path();
 			return;
 		}
 
@@ -273,21 +316,26 @@ void ASA(){
 		remove_openList(curr);
 		closedList.push_back(curr);
 
-		//check neighboring potential paths of curr
-						
-		for ( int x: neighbors[curr]){
+		//check neighboring potential paths of curr		
+		for (int x: neighbors[curr]){
 			compute_distance(x);
 			compute_hueristic(x);
 			compute_totalVal(x);
 			openList.push_back(x);
+			parent[curr] = x;
 		}
 			
 		
-		sort_openList();	
+		sort_openList();
+
+		//debug purposes
+			
 		for (int x: openList){
 			cout << "current openlist" << endl;
 			cout << "node: " << x << endl;
+			cout << " " << endl;
 		}
+		
 		
 				
     }
@@ -295,11 +343,12 @@ void ASA(){
 }
 
     void printResult(ofstream& outfile){
-        for(int i = 0; i < path.size(); i++){
+        for(int i = path.size() - 1; i > -1; i--){
 		
 	    //prints to output.txt
 	    //outfile << "shortest path from " << g.get_start() << " to " << g.get_finish() << ": ";
             outfile << "-> " << path [i] << " ";
+	    
 	    //rpints to terminal
 	    cout << " -> " << path[i] << " ";
 	    //cout << "shortest path from " << g.get_start() << " to " << g.get_finish() << ": ";
@@ -355,7 +404,7 @@ int main(int argc, char* argv[])
 	
 	//undirected graph
         g.setEdge(i,j,d);
-        //g.setEdge(j,i,d);
+        g.setEdge(j,i,d);
 
 	//to make sure edge was initialized properly
 	//printf("coord dist %d \n", g.get_edge(i,j));
@@ -386,6 +435,9 @@ int main(int argc, char* argv[])
 
     //printf("printf test2\n");
     //cout << "got coordinates from input file" <<endl;
+
+    //neighobors list is working
+    //g.print_neighbors();
 
     //run asa and put results in output file
     g.ASA();
