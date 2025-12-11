@@ -85,6 +85,7 @@ private:
     vector <int> openList;	//nodes in queue
     vector <int> closedList;	//nodes whose paths have been explored
     vector <int> path;		//to store optimal path solution
+    vector<vector<int>> weight;
 
 public:
     //constructor for Graph
@@ -158,14 +159,18 @@ public:
 	distance.assign(numNodes , 0);
 	hueristic.assign(numNodes, 0);
 	totalVal.assign(numNodes, 0);
+	weight.assign(n, vector<int>(n, -1));
 
     }
 
 
-    void setEdge(int i, int j, int weight) {
+    void setEdge(int i, int j, int d) {
     	neighbors[i].push_back(j);
 	neighbors[j].push_back(i);
-	distance[j] = weight;
+	//distance[j] = weight;
+	weight[i][j] = d;
+	weight[j][i] = d;
+	//distance[x] = distance[curr] + weight[curr][x];
     }
 
     void setCoordinate(int n, int x, int y) {
@@ -189,16 +194,19 @@ void compute_hueristic(int n)
     }
 
 
-    void compute_distance(int n){
-    	int tempdist = 0;
-	int lastnode = 0;
+    void compute_distance(int n, int curr){
+    	//int tempdist = 0;
+	//int lastnode = 0;
 
 	
-	if(n == start){
+	if(curr == start){
 		distance[n] = 0;
 		return;
 	}
 
+	distance[n] = distance[curr] + weight[curr][n];
+
+	/* 
 	//add up distances of current path 
 	for (int x: path){
 		tempdist += distance[x];
@@ -210,6 +218,8 @@ void compute_hueristic(int n)
 	//update results in distance array 
 	distance[n] = tempdist;
 	
+	*/
+
     	//case direct neigbor
 	/*
     	if (adjMatrix[n][start] > 0){
@@ -278,7 +288,10 @@ void compute_hueristic(int n)
 
     //some type of merge sort to ensure openList is a priority queue
     void sort_openList(){
-	    std::sort(openList.begin(), openList.end());
+	    std::sort(openList.begin(), openList.end(),[&](int a, int b) {
+            return totalVal[a] < totalVal[b];
+        }
+    );
     }
 
 /*
@@ -295,7 +308,7 @@ void ASA(){
 	
 	//intialize values for starting node
 	compute_hueristic(start);
-	compute_distance(start);
+	compute_distance(start,start);
 	compute_totalVal(start);
 
 	//add starting node to openlist
@@ -316,7 +329,7 @@ void ASA(){
 		//if closedList has this ovj, has already been explored
 		//continue
 		if (visitalready(curr)){
-			cout << "visit already, skip" << endl;
+			//cout << "visit already, skip" << endl;
 			//remove top element
 			openList.erase(openList.begin());
 
@@ -331,16 +344,21 @@ void ASA(){
 
 		//check neighboring potential paths of curr		
 		for (int x: neighbors[curr]){
-			compute_distance(x);
+
+			if (visitalready(x)){
+				continue;
+			}
+
+			compute_distance(x, curr);
 			compute_hueristic(x);
 			compute_totalVal(x);
-			openList.push_back(x);
+			//openList.push_back(x);
 
 			if (!visitalready(x)){
-				//openList.push_back(x);
-				parent[x] = curr;
+				openList.push_back(x);
+				//parent[x] = curr;
 			}
-			//parent[x] = curr;
+			parent[x] = curr;
 			
 			/*
 			cout << "node: " << x << endl;
@@ -352,12 +370,13 @@ void ASA(){
 
 		//debug purposes
 			
-		
+		/*
 		for (int x: openList){
 			cout << "current openlist" << endl;
 			cout << "node: " << x << endl;
 			cout << " " << endl;
 		}
+		*/
 		
 		
 		
@@ -460,7 +479,7 @@ int main(int argc, char* argv[])
     //cout << "got coordinates from input file" <<endl;
 
     //neighobors list is working
-    g.print_neighbors();
+    //g.print_neighbors();
 
     //run asa and put results in output file
     g.ASA();
@@ -468,7 +487,7 @@ int main(int argc, char* argv[])
     
 
     g.gen_path();
-    g.print_parent();
+    //g.print_parent();
 
     outfile << "shortest path from " << g.get_start() << " to " << g.get_finish() << ": ";
     cout << "shortest path from " << g.get_start() << " to " << g.get_finish() << ": ";
