@@ -496,11 +496,11 @@ int main(int argc, char* argv[])
     auto start = std::chrono::steady_clock::now(); // Measure time taken for algorithm
     g.ASA();
     g.gen_path();
+
     auto end = std::chrono::steady_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
-    g.printResult(outfile);
-    outfile << "shortest path from " << g.get_start() << " to " << g.get_finish() << ": ";
-    cout << "shortest path from " << g.get_start() << " to " << g.get_finish() << ": ";
+    outfile << "ASA result: " << g.get_start() << " to " << g.get_finish() << ": ";
+    cout << "ASA result: " << g.get_start() << " to " << g.get_finish() << ": ";
     g.printResult(outfile);
     outfile << "Time Taken: " << duration.count() << " microseconds" << endl;
 
