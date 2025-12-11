@@ -16,4 +16,5 @@ run_dfs: dfs
 	./dfs inputDFS.txt outputDFS.txt
 
 clean:
-	rm -f ASA dfs
+	rm -f asa dfs
+
