@@ -60,6 +60,10 @@
 #include <sstream>
 #include <cmath>
 #include <string>
+
+//for timer
+#include <chrono>
+
 //for printf
 #include <cstdio>
 
@@ -190,7 +194,10 @@ void compute_hueristic(int n)
 	y2 = coordinates[finish][1];
 
 	//calculate using euclidean distance
-	hueristic[n] = sqrt(pow((x1-x2), 2) + pow ((y1-y2),2));
+	//hueristic[n] = sqrt(pow((x1-x2), 2) + pow ((y1-y2),2));
+	//
+	//calculate w manhattan dist?
+	hueristic[n] = std::abs(x1-x2) + std::abs(y1-y2);
     }
 
 
@@ -482,18 +489,25 @@ int main(int argc, char* argv[])
     //g.print_neighbors();
 
     //run asa and put results in output file
-    g.ASA();
+    //g.ASA();
     //cout << "ASA run done" << endl;
     
 
-    g.gen_path();
+    //g.gen_path();
     //g.print_parent();
 
-    outfile << "shortest path from " << g.get_start() << " to " << g.get_finish() << ": ";
-    cout << "shortest path from " << g.get_start() << " to " << g.get_finish() << ": ";
+    auto start = std::chrono::steady_clock::now(); // Measure time taken for algorithm
+    g.ASA();
+    g.gen_path();
+
+    auto end = std::chrono::steady_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+    outfile << "ASA result: " << g.get_start() << " to " << g.get_finish() << ": ";
+    cout << "ASA result: " << g.get_start() << " to " << g.get_finish() << ": ";
     g.printResult(outfile);
-    //cout << "print results done" << endl;
-    
+    outfile << "Time Taken: " << duration.count() << " microseconds" << endl;
+
+        
 
     //shelved temporary
     //g.new_path(6,1);
