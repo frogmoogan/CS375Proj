@@ -257,7 +257,7 @@ void compute_hueristic(int n)
     }
 
     void remove_openList(int n){
-    	for (int i = 0; i < openList.size(); i++){
+    	for (int i = 0; i < int(openList.size()); i++){
 		if (openList[i] == n){
 			openList.erase(openList.begin() + i);
 			return;
@@ -276,7 +276,7 @@ void compute_hueristic(int n)
 
     //check if closedList has this node
     bool closedListsearch(int n){
-    	for (int i = 0; i <closedList.size(); i++){
+    	for (int i = 0; i < int(closedList.size()); i++){
 		if (closedList[i] == n){
 			return true;
 		}
@@ -396,14 +396,14 @@ void ASA(){
 }
 
     void printResult(ofstream& outfile){
-        for(int i = path.size() - 1; i > -1; i--){
+        for(int i = int(path.size() - 1); i > -1; i--){
 		
 	    //prints to output.txt
 	    //outfile << "shortest path from " << g.get_start() << " to " << g.get_finish() << ": ";
             outfile << "-> " << path [i] << " ";
 	    
 	    //rpints to terminal
-	    cout << " -> " << path[i] << " ";
+	    //cout << " -> " << path[i] << " ";
 	    //cout << "shortest path from " << g.get_start() << " to " << g.get_finish() << ": ";
         }
         outfile << endl;
@@ -506,7 +506,7 @@ int main(int argc, char* argv[])
     auto end = std::chrono::steady_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
     outfile << "ASA result: " << g.get_start() << " to " << g.get_finish() << ": ";
-    cout << "ASA result: " << g.get_start() << " to " << g.get_finish() << ": ";
+    //cout << "ASA result: " << g.get_start() << " to " << g.get_finish() << ": ";
     g.printResult(outfile);
     outfile << "Time Taken: " << duration.count() << " microseconds" << endl;
 
