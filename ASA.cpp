@@ -98,6 +98,8 @@ public:
 	    finish = f;
     } 
 
+    //don't need anymore
+    /*
    void new_path(int s, int f){	
 	//if it is not empty, ASA has been called before
 	//clear lists, distance, path, and hueristics
@@ -112,6 +114,7 @@ public:
 		parent.clear();
 	}
    }
+   */
 
    void print_parent(){
 	int i = 0;
@@ -194,7 +197,10 @@ void compute_hueristic(int n)
 	y2 = coordinates[finish][1];
 
 	//calculate using euclidean distance
-	hueristic[n] = sqrt(pow((x1-x2), 2) + pow ((y1-y2),2));
+	//hueristic[n] = sqrt(pow((x1-x2), 2) + pow ((y1-y2),2));
+	
+	//Manhattan distance is more optimal
+	hueristic[n] = std::abs(x1-x2) + std::abs(y1-y2);
     }
 
 
