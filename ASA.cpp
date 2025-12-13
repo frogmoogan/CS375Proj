@@ -137,6 +137,7 @@ public:
 
    }
 
+   /*
    bool visitalready(int n){
    	for (int x: closedList){
 		if (x == n){
@@ -148,6 +149,7 @@ public:
 	return false;
    
    } 
+   */
 
     int get_start(){
     	return start;
@@ -173,7 +175,7 @@ public:
 
     void setEdge(int i, int j, int d) {
     	neighbors[i].push_back(j);
-	neighbors[j].push_back(i);
+	//neighbors[j].push_back(i);
 	//distance[j] = weight;
 	weight[i][j] = d;
 	weight[j][i] = d;
@@ -274,6 +276,8 @@ void compute_hueristic(int n)
 	//done path has been generated!
     }
 
+
+    
     //check if closedList has this node
     bool closedListsearch(int n){
     	for (int i = 0; i < int(closedList.size()); i++){
@@ -284,10 +288,11 @@ void compute_hueristic(int n)
 	//did not find element
 	return false;
     }
+    
 
 
     bool openListsearch(int n){
-    	for (int i = 0; i < openList.size(); i++){
+    	for (int i = 0; i < int(openList.size()); i++){
 		if (openList[i] == n){
 			return true;
 		}
@@ -338,38 +343,81 @@ void ASA(){
 
 		//if closedList has this ovj, has already been explored
 		//continue
-		if (visitalready(curr)){
-			//cout << "visit already, skip" << endl;
+		if (closedListsearch(curr)){
+			//int noderem = openList.begin();
+			//cout << "visit already, skip " << curr  << endl;
+
 			//remove top element
+			//cout << "remove node " << openList.front() << endl;
 			openList.erase(openList.begin());
+			//openList.erase(0);
 
 			//proceed to next node
 			continue;
 		}
 		
 		//move curr node from open to closed list
-		openList.erase(openList.begin());
+		//openList.erase(openList.begin());
 		//openList.clear();
 		closedList.push_back(curr);
 
+		//debug purpose
+		/*
+		for (int x:neighbors[curr]){
+		cout << "openList currently" << endl; 
+		cout << "curr=" << curr
+		<< " neighbor=" << x
+		<< " totalVal=" << totalVal[x]
+		<< " hueri=" << hueristic[x]
+		<< " oldDist=" << distance[x] << endl;
+		cout << "" << endl;
+		}
+		*/
+
 		//check neighboring potential paths of curr		
 		for (int x: neighbors[curr]){
-
-			if (visitalready(x)){
+			if (closedListsearch(x)){
 				continue;
 			}
 
+			int tempdist = distance[curr] + weight[curr][x];
+
+			if (!openListsearch(x) || tempdist < distance[x]) {
+
+        			parent[x] = curr;
+        			distance[x] = tempdist;
+
+        			compute_hueristic(x);
+        			compute_totalVal(x);
+
+        			if (!openListsearch(x)) {
+            			openList.push_back(x);
+				//cout << "added node " << x << endl;
+        			}
+    			}
+
+			/*
+			cout << "curr=" << curr
+     << " neighbor=" << x
+     << " totalVal=" << totalVal[x]
+     << " hueri=" << hueristic[x]
+     << " oldDist=" << distance[x] << endl;
+     */
+     
+			/*
 			compute_distance(x, curr);
 			compute_hueristic(x);
 			compute_totalVal(x);
 			//openList.push_back(x);
 
-			if (!visitalready(x)){
+			if (!closedListsearch(x) && !openListsearch(x)){
 				openList.push_back(x);
-				//parent[x] = curr;
+				parent[x] = curr;
 			}
-			parent[x] = curr;
+			*/
+			//parent[x] = curr;
 			
+
 			/*
 			cout << "node: " << x << endl;
 			cout << " " << endl;
@@ -379,7 +427,6 @@ void ASA(){
 		sort_openList();
 
 		//debug purposes
-			
 		/*
 		for (int x: openList){
 			cout << "current openlist" << endl;
@@ -387,9 +434,7 @@ void ASA(){
 			cout << " " << endl;
 		}
 		*/
-		
-		
-		
+	
 				
     }
 	cout << "end of ASA reached" << endl;
